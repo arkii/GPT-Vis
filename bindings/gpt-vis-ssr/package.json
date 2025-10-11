@@ -25,18 +25,30 @@
   ],
   "scripts": {
     "build": "father build",
+    "build:server": "tsc --project tsconfig.server.json",
     "check-deps": "father doctor",
-    "test": "jest --config ./jest.config.ts"
+    "test": "jest --config ./jest.config.ts",
+    "dev:server": "tsx server/index.ts",
+    "start:server": "node dist/server/index.js",
+    "server": "npm run build:server && npm run start:server",
+    "setup": "bash setup.sh",
+    "postinstall": "cd node_modules/.pnpm/canvas@*/node_modules/canvas 2>/dev/null && npm run install || true"
   },
   "dependencies": {
     "@antv/g-plugin-rough-canvas-renderer": "^2.0.44",
     "@antv/g2-ssr": "^0.2.0",
     "@antv/g6-ssr": "^0.1.0",
     "@antv/gpt-vis": "^0.4.0",
-    "canvas": "^3"
+    "canvas": "^3.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.0.1"
   },
   "devDependencies": {
+    "@antv/g": "^6.1.28",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
+    "@types/node": "^22.0.0",
     "@types/pixelmatch": "^5.2.6",
     "@types/pngjs": "^6.0.5",
     "father": "^4.5.2",
@@ -46,6 +58,7 @@
     "pngjs": "^6.0.0",
     "ts-jest": "^29.3.1",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
     "typescript": "^5.8.3"
   },
   "engines": {

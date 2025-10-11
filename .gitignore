@@ -78,8 +78,11 @@ jspm_packages/
 # Build
 dist
 docs-dist
-server
 .dumi
 
 # test
 __tests__/assets/*.png
+
+# gpt-vis-ssr server
+bindings/gpt-vis-ssr/public/
+bindings/gpt-vis-ssr/.pnpmfile.cjs

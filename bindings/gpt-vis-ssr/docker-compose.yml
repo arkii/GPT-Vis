@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  gpt-vis-ssr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: gpt-vis-ssr:latest
+    container_name: gpt-vis-ssr
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # 服务器配置
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      
+      # 图片返回模式
+      # base64: 返回 base64 编码的图片（默认）
+      # url: 保存到文件系统并返回 URL
+      - IMAGE_MODE=base64
+      
+      # 当 IMAGE_MODE=url 时的配置
+      # - BASE_URL=http://localhost:3000
+      # - PUBLIC_PATH=/app/public
+      # - PUBLIC_URL_PREFIX=/images
+    
+    # 当使用 url 模式时，可以挂载卷保存图片
+    # volumes:
+    #   - ./data/images:/app/public
+    
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    
+    # 资源限制
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+# 如果需要配合 nginx 使用
+# networks:
+#   default:
+#     name: gpt-vis-network
+
