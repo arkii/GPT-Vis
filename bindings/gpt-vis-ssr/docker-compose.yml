@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: gpt-vis-ssr:latest
+    image: arkii/gpt-vis-ssr:latest
     container_name: gpt-vis-ssr
     restart: unless-stopped
     ports:
