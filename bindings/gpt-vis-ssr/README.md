@@ -63,6 +63,7 @@ pnpm run start:server
 
 ```bash
 # Build and start the service
+# Note: First build may take 3-5 minutes due to canvas native module compilation
 docker-compose up -d
 # or for Docker Compose v2+
 docker compose up -d
@@ -75,6 +76,8 @@ docker-compose down
 ```
 
 The server will be available at `http://localhost:3000`.
+
+> **💡 Build Time Note:** The first Docker build takes 3-5 minutes because `canvas` is a native module that needs to be compiled from source on Alpine Linux. Subsequent builds will be much faster due to Docker layer caching. See [docs/CANVAS_BUILD.md](./docs/CANVAS_BUILD.md) for details.
 
 ##### Using Docker Directly
 
@@ -184,6 +187,21 @@ type SSRResult = {
   destroy: () => void;
 };
 ```
+
+## 🈳 Chinese Font Support
+
+The server automatically registers fonts for Chinese character rendering. For Docker deployments, Chinese fonts (Noto CJK) are included in the image.
+
+If you encounter Chinese characters displaying as squares (乱码), ensure:
+
+1. **Font file exists**: The `public/Gaegu-Regular.ttf` file should be present
+2. **Docker**: Chinese fonts are automatically installed in the Docker image
+3. **Local development**: Make sure the font file is accessible
+
+The server will log font registration status on startup:
+
+- ✅ Fonts registered successfully
+- ⚠️ Failed to register fonts (Chinese may not render correctly)
 
 ## License
 

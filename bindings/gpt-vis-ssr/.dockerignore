@@ -32,5 +32,10 @@ logs/
 .DS_Store
 .env
 .env.local
-public/
+# 排除 public 目录中的临时文件，但保留字体文件
+public/*
+!public/*.ttf
+!public/*.otf
+!public/*.woff
+!public/*.woff2
 

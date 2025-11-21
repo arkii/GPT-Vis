@@ -1,6 +1,9 @@
 FROM node:20-alpine AS base
 
 # 安装构建依赖（canvas 需要）
+# 注意：canvas 是原生模块，在 Alpine 上需要从源码编译
+# 这是因为 Alpine (musl) 没有预编译的二进制文件
+# 构建时间：约 3-5 分钟（首次），后续构建会使用缓存
 RUN apk add --no-cache \
     build-base \
     cairo-dev \
@@ -8,7 +11,9 @@ RUN apk add --no-cache \
     pango-dev \
     giflib-dev \
     pixman-dev \
-    python3
+    python3 \
+    make \
+    g++
 
 WORKDIR /app
 
@@ -57,12 +62,15 @@ RUN pnpm run build && \
 FROM node:20-alpine AS final
 
 # 安装运行时依赖（canvas 需要）
+# 添加中文字体支持
 RUN apk add --no-cache \
     cairo \
     jpeg \
     pango \
     giflib \
-    pixman
+    pixman \
+    font-noto-cjk \
+    font-noto-cjk-extra
 
 WORKDIR /app
 
@@ -78,7 +86,10 @@ COPY --from=deps --chown=appuser:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=appuser:nodejs /app/dist ./dist
 COPY --from=builder --chown=appuser:nodejs /app/package.json ./package.json
 
-# 创建 public 目录（用于存储生成的图片）
+# 复制字体文件
+COPY --from=builder --chown=appuser:nodejs /app/public ./public
+
+# 创建 public 目录（用于存储生成的图片，如果不存在）
 RUN mkdir -p public
 
 # 环境变量

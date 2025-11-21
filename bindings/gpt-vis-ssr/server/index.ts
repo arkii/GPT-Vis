@@ -3,13 +3,35 @@ import { randomUUID } from 'crypto';
 import express, { Request, Response } from 'express';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { registerFont } from 'canvas';
 import { render } from '../src/index';
+import { FontFamily } from '../src/types';
 import type { HealthResponse, RenderRequest, RenderResponse, ServerConfig } from './types';
+
+/**
+ * 注册字体
+ */
+function registerFonts() {
+  try {
+    const fontPath = path.resolve(__dirname, '../public/Gaegu-Regular.ttf');
+    registerFont(fontPath, {
+      family: FontFamily.ROUGH,
+      weight: 'normal',
+      style: 'normal',
+    });
+    console.log('✅ Fonts registered successfully');
+  } catch (error: any) {
+    console.warn('⚠️  Failed to register fonts:', error.message);
+    console.warn('   Chinese characters may not render correctly');
+  }
+}
 
 /**
  * 创建并启动 HTTP 服务器
  */
 export async function createServer(config: Partial<ServerConfig> = {}) {
+  // 注册字体（必须在服务器启动前）
+  registerFonts();
   const serverConfig: ServerConfig = {
     port: Number(process.env.PORT) || 3000,
     host: process.env.HOST || '0.0.0.0',
